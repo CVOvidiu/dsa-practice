@@ -1,5 +1,12 @@
 /*
-	Greedy fisa 2 - 3a
+	Într-un laborator de analize chimice se utilizează n reactivi. Se ştie că, pentru a evita accidentele
+	sau deprecierea reactivilor, aceştia trebuie să fie stocaţi în condiţii de mediu speciale. Mai exact, pentru
+	fiecare reactiv, se precizează intervalul de temperatură [tmin, tmax] în care trebuie să se încadreze
+	temperatura de stocare a acestuia. Reactivii vor fi plasaţi în frigidere. Orice frigider are un dispozitiv cu
+	ajutorul căruia putem stabili temperatura (constantă) care va fi in interiorul acelui frigider (exprimată
+	într-un număr întreg de grade Celsius)
+	a. Să se specifice care este numărul minim de frigidere de care avem nevoie pentru a stoca cei
+	n-reactivi astfel încât diferența tmax - tmin să fie de maxim K grade celsius, K – precizat.
 */
 
 #include <iostream>
