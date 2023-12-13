@@ -25,8 +25,8 @@ bool readMtx(int**& mtx, int& n, const std::string fileName) {
 			file >> mtx[i][j];
 	}
 
-	return true;
 	file.close();
+	return true;
 }
 
 void writeMtx(int** mtx, int n) {
