@@ -1,86 +1,121 @@
-// Circular Queue.
-// Children's game. We always start counting from `p` child. We eliminate the `m`-th child from position of `p`.
-// Last one standing wins.
-
 #define _CRT_SECURE_NO_WARNINGS
-
 #include <stdio.h>
-#include <stdlib.h>
+#include <malloc.h>
 
-struct Node {
-	int info;
-	struct Node* next;
-};
+void alocareMatrice(int n, int m, float*** mat);
+void citireMatrice(int n, int m, float** mat);
+void afisareMatrice(int n, int m, float** mat);
+float medieAritmetica(int n, float* v);
+void getMediiLinii(int n, int m, float** mat, float** v);
+void swap(float* x1, float* x2);
+void swap_ptr(float** x1, float** x2);
+int partitionare(int n, int m, float** mat, float* v);
+int qSort(int n, int m, float** mat, float* v);
 
-struct CircQ {
-	struct Node* first;
-	struct Node* last;
-};
-
-typedef struct Node Node;
-typedef struct CircQ CircQ;
-
-void push(CircQ* q, int x) { // x - info de adaugat
-	Node* nn = (Node*)malloc(sizeof(Node)); // nn - new node
-	nn->info = x;
-
-	if (q->first == NULL) // Nu exista alte noduri
-		q->first = nn;
-	else
-		q->last->next = nn;
-	nn->next = q->first;
-	q->last = nn;
-}
-
-void empty(CircQ* q) {
-	Node* n;
-	while (q->first != q->last) {
-		n = q->first;
-		q->last->next = q->first->next;
-		q->first = n->next;
-		free(n);
-	}
-	free(q->first);
-	q->first = NULL;
-	q->last = NULL;
-}
-
-Node* getNode(CircQ q, int n) {
-	if (n <= 0) return NULL;
-	Node* nn = q.first;
-	for (int i = 1; i < n; i++)
-		nn = nn->next;
-	return nn;
-}
-
-void game(CircQ* q, int m, int p) { // m - al catalea copil elimin, p - de la care incep
-	Node* n, * toDel;
-	while (q->first != q->last) {
-		n = getNode(*q, p);
-		for (int i = 1; i < m; i++)
-			n = n->next;
-		toDel = n->next;
-		n->next = toDel->next;
-		if (toDel == q->first) {
-			q->first = q->first->next;
-		}
-		else if (toDel == q->last)
-			q->last = n;
-		printf("%d ", toDel->info);
-		free(toDel);
-	}
-	printf("Winner: %d\n", q->first->info);
-}
-
-int main() {
-	CircQ q;
-	q.first = NULL;
-	q.last = NULL;
-	int n, m, p;
-	scanf("%d%d%d", &n, &m, &p);
-	for (int i = 1; i <= n; i++)
-		push(&q, i);
-	game(&q, m, p);
-	empty(&q);
+int main()
+{
+	int n, m;
+	float** mat, * medii;
+	printf("Dati dimensiunile matricii:\n");
+	scanf("%d%d", &n, &m);
+	alocareMatrice(n, m, &mat);
+	printf("Dati elementele matricii:\n");
+	citireMatrice(n, m, mat);
+	getMediiLinii(n, m, mat, &medii);
+	qSort(0, n, mat, medii);
+	afisareMatrice(n, m, mat);
+	free(medii);
+	for (int i = 0; i < n; i++)
+		free(mat[i]);
+	free(mat);
 	return 0;
+}
+
+void alocareMatrice(int n, int m, float*** mat)
+{
+	int i;
+	*mat = (float**)malloc(n * sizeof(float*));
+	for (i = 0; i < n; i++)
+		(*mat)[i] = (float*)malloc(m * sizeof(float));
+}
+
+void citireMatrice(int n, int m, float** mat)
+{
+	int i, j;
+	for (i = 0; i < n; i++)
+		for (j = 0; j < m; j++)
+			scanf("%f", &mat[i][j]);
+
+}
+void afisareMatrice(int n, int m, float** mat)
+{
+	int i, j;
+	for (i = 0; i < n; i++)
+	{
+		for (j = 0; j < m; j++)
+			printf("%f ", mat[i][j]);
+		printf("\n");
+	}
+}
+
+
+float medieAritmetica(int n, float* v)
+{
+	float s = 0.f;
+	int i;
+
+	for (i = 0; i < n; i++)
+		s += v[i];
+	return  s / n;
+}
+
+
+void getMediiLinii(int n, int m, float** mat, float** v)
+{
+	int  i, j;
+	*v = (float*)calloc(n, sizeof(float));
+	for (i = 0; i < n; i++)
+	{
+		for (j = 0; j < m; j++)
+			(*v)[i] += mat[i][j];
+		(*v)[i] /= m;
+	}
+}
+
+void swap(float* x1, float* x2) {
+	float aux = *x1;
+	*x1 = *x2;
+	*x2 = aux;
+}
+void swap_ptr(float** x1, float** x2)
+{
+	float* aux = *x1;
+	*x1 = *x2;
+	*x2 = aux;
+}
+int partitionare(int first, int last, float** mat, float* v)
+{
+	int i = first, j;
+	float p = v[last - 1];
+	for (j = first; j < last; j++)
+	{
+		if (v[j] < p)
+		{
+			swap(&v[i], &v[j]);
+			swap_ptr(&mat[i], &mat[j]);
+			i++;
+		}
+	}
+	swap(&v[i], &v[last - 1]);
+	swap_ptr(&mat[i], &mat[last-1]);
+	return i;
+}
+
+int qSort(int first, int last, float** mat, float* v) {
+	if (first < last)
+	{
+		int i = partitionare(first, last, mat, v);
+		qSort(first, i - 1, mat, v);
+		qSort( i + 1, last, mat, v);
+	}
 }
